@@ -2,7 +2,7 @@
 
 所有页面都是：上面部分是屏幕，下面部分是按键。
 
-![](../resources/design.png)
+![](resources/design.png)
 
 ---
 附
