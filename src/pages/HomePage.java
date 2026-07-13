@@ -1,6 +1,7 @@
 package pages;
 
 import model.Contact;
+import ui.ScreenPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -8,8 +9,11 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * 默认主页 —— 联系人列表页面
+ * 联系人列表页面
  * 只能通过下方按键操作，不支持鼠标点击
+ * 上/下：循环翻页（首尾衔接）
+ * 取消：返回菜单
+ * 挂断：返回黑屏
  */
 public class HomePage extends JPanel {
 
@@ -17,8 +21,11 @@ public class HomePage extends JPanel {
     private JList<String> contactList;
     private List<Contact> contacts;
     private JLabel statusLabel;
+    private ScreenPanel screenPanel;
 
-    public HomePage() {
+    public HomePage(ScreenPanel screenPanel) {
+        this.screenPanel = screenPanel;
+
         setLayout(new BorderLayout());
         setBackground(new Color(30, 30, 50));
         setBorder(new EmptyBorder(10, 15, 10, 15));
@@ -44,7 +51,7 @@ public class HomePage extends JPanel {
         contactList.setBorder(new EmptyBorder(5, 5, 5, 5));
 
         // 禁用鼠标交互 — 只能用按键操作
-        contactList.setEnabled(false);  // 禁止鼠标点击选择
+        contactList.setEnabled(false);
 
         JScrollPane scrollPane = new JScrollPane(contactList);
         scrollPane.setBorder(null);
@@ -52,7 +59,7 @@ public class HomePage extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 
         // ---- 底部状态栏 ----
-        statusLabel = new JLabel("共 " + contacts.size() + " 个联系人  |  按▲▼浏览  确认选择", SwingConstants.CENTER);
+        statusLabel = new JLabel("共 " + contacts.size() + " 个联系人  |  上下浏览  确认查看  取消返回", SwingConstants.CENTER);
         statusLabel.setForeground(new Color(150, 150, 150));
         statusLabel.setFont(new Font("Microsoft YaHei", Font.PLAIN, 12));
         statusLabel.setBorder(new EmptyBorder(5, 0, 5, 0));
@@ -71,31 +78,42 @@ public class HomePage extends JPanel {
 
         switch (keyCode) {
             case "UP":
+                // 循环：第一个往上 → 跳到最后一个
                 if (currentIndex > 0) {
                     contactList.setSelectedIndex(currentIndex - 1);
                     contactList.ensureIndexIsVisible(currentIndex - 1);
-                    updateStatus("▲ 上一个");
+                } else {
+                    contactList.setSelectedIndex(maxIndex);
+                    contactList.ensureIndexIsVisible(maxIndex);
                 }
+                updateStatus("上: " + contacts.get(contactList.getSelectedIndex()).getName());
                 break;
 
             case "DOWN":
+                // 循环：最后一个往下 → 跳到第一个
                 if (currentIndex < maxIndex) {
                     contactList.setSelectedIndex(currentIndex + 1);
                     contactList.ensureIndexIsVisible(currentIndex + 1);
-                    updateStatus("▼ 下一个");
+                } else {
+                    contactList.setSelectedIndex(0);
+                    contactList.ensureIndexIsVisible(0);
                 }
+                updateStatus("下: " + contacts.get(contactList.getSelectedIndex()).getName());
                 break;
 
             case "OK":
                 Contact selected = getSelectedContact();
                 if (selected != null) {
                     updateStatus("已选择: " + selected.getName());
-                    // TODO: 后续可跳转详情页
                 }
                 break;
 
             case "CANCEL":
-                updateStatus("已取消");
+                // 返回菜单
+                updateStatus("返回菜单");
+                if (screenPanel != null) {
+                    screenPanel.goToMenu();
+                }
                 break;
 
             case "CALL":
@@ -106,11 +124,14 @@ public class HomePage extends JPanel {
                 break;
 
             case "HANGUP":
-                updateStatus("已挂断");
+                // 返回黑屏
+                updateStatus("挂断");
+                if (screenPanel != null) {
+                    screenPanel.goToOff();
+                }
                 break;
 
             default:
-                // 数字键等，暂不处理
                 break;
         }
     }
@@ -123,7 +144,7 @@ public class HomePage extends JPanel {
         titleBar.setBackground(new Color(20, 20, 40));
         titleBar.setBorder(new EmptyBorder(8, 10, 8, 10));
 
-        JLabel titleLabel = new JLabel("📞 联系人", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("联系人", SwingConstants.CENTER);
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Microsoft YaHei", Font.BOLD, 22));
         titleBar.add(titleLabel, BorderLayout.CENTER);
