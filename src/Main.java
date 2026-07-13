@@ -1,5 +1,17 @@
-public class Main{
-    public static void main(String[] args){
-        System.out.println("hello world");
+import ui.PhoneFrame;
+
+import javax.swing.*;
+
+/**
+ * 程序入口
+ * 老年机联系人应用
+ */
+public class Main {
+    public static void main(String[] args) {
+        // 使用 Swing 事件分发线程启动 GUI
+        SwingUtilities.invokeLater(() -> {
+            PhoneFrame frame = new PhoneFrame();
+            frame.setVisible(true);
+        });
     }
 }
