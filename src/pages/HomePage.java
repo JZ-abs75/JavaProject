@@ -1,6 +1,8 @@
 package pages;
 
 import model.Contact;
+import repository.ContactRepository;
+import repository.ContactRepositoryImpl;
 import ui.ScreenPanel;
 
 import javax.swing.*;
@@ -35,7 +37,12 @@ public class HomePage extends JPanel {
         add(titleBar, BorderLayout.NORTH);
 
         // ---- 中间联系人列表 ----
-        contacts = Contact.getSampleContacts();
+        // 从数据库加载联系人（失败则使用示例数据）
+        ContactRepository repository = new ContactRepositoryImpl();
+        contacts = repository.findAll();
+        if (contacts.isEmpty()) {
+            contacts = Contact.getSampleContacts();  // 数据库不可用时回退
+        }
         listModel = new DefaultListModel<>();
         for (Contact c : contacts) {
             listModel.addElement(formatContact(c));
