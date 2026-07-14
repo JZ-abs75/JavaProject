@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 联系人数据访问实现（MySQL）
- * 实现 ContactRepository 接口，提供完整的增删改查
+ * 实现 ContactRepository 接口，完整增删改查
  */
 public class ContactRepositoryImpl implements ContactRepository {
 
@@ -23,11 +23,11 @@ public class ContactRepositoryImpl implements ContactRepository {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Contact c = new Contact(
+                contacts.add(new Contact(
+                    rs.getInt("id"),
                     rs.getString("name"),
                     rs.getString("phone_number")
-                );
-                contacts.add(c);
+                ));
             }
 
         } catch (SQLException e) {
@@ -49,13 +49,14 @@ public class ContactRepositoryImpl implements ContactRepository {
 
             if (rs.next()) {
                 return new Contact(
+                    rs.getInt("id"),
                     rs.getString("name"),
                     rs.getString("phone_number")
                 );
             }
 
         } catch (SQLException e) {
-            System.err.println("查询联系人失败: " + e.getMessage());
+            System.err.println("按ID查询失败: " + e.getMessage());
         }
 
         return null;
@@ -70,9 +71,7 @@ public class ContactRepositoryImpl implements ContactRepository {
 
             ps.setString(1, contact.getName());
             ps.setString(2, contact.getPhoneNumber());
-
-            int rows = ps.executeUpdate();
-            return rows > 0;
+            return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
             System.err.println("新增联系人失败: " + e.getMessage());
@@ -82,9 +81,20 @@ public class ContactRepositoryImpl implements ContactRepository {
 
     @Override
     public boolean update(Contact contact) {
-        // 需要 ID 才能更新，暂时不实现
-        System.out.println("更新操作暂未实现");
-        return false;
+        String sql = "UPDATE contacts SET name = ?, phone_number = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, contact.getName());
+            ps.setString(2, contact.getPhoneNumber());
+            ps.setInt(3, contact.getId());
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("更新联系人失败: " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
@@ -95,8 +105,7 @@ public class ContactRepositoryImpl implements ContactRepository {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
-            int rows = ps.executeUpdate();
-            return rows > 0;
+            return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
             System.err.println("删除联系人失败: " + e.getMessage());
