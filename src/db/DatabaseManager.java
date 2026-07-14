@@ -8,10 +8,10 @@ import java.sql.*;
  */
 public class DatabaseManager {
 
-    // MySQL 连接参数（根据你的环境修改）
+    // 连接mySQL
     private static final String URL = "jdbc:mysql://localhost:3306/database1";
     private static final String USER = "root";
-    private static final String PASSWORD = "#Jzx201875";
+    private static final String PASSWORD = "123456";
 
     private static Connection connection;
 
@@ -47,21 +47,20 @@ public class DatabaseManager {
                 ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
             );
 
-            // 如果表为空，插入示例数据
-            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM contacts");
-            if (rs.next() && rs.getInt(1) == 0) {
-                stmt.execute("INSERT INTO contacts (name, phone_number) VALUES " +
-                    "('张三', '13800138001')," +
-                    "('李四', '13900139002')," +
-                    "('王五', '13700137003')," +
-                    "('赵六', '13600136004')," +
-                    "('钱七', '13500135005')," +
-                    "('孙八', '13400134006')," +
-                    "('周九', '13300133007')," +
-                    "('吴十', '13200132008')"
-                );
-                System.out.println("数据库已初始化，插入了示例联系人。");
-            }
+            // 每次启动清空并重新插入示例数据
+            stmt.execute("DELETE FROM contacts");
+            stmt.execute("INSERT INTO contacts (name, phone_number) VALUES " +
+                "('中分蔡徐坤', '12345678900')," +
+                "('俄罗斯米塔', '12345678901')," +
+                "('香港刘德华', '12345678902')," +
+                "('常山赵子龙', '12345678903')," +
+                "('美国马斯克', '12345678904')," +
+                "('花果山猴王', '12345678905')," +
+                "('狗熊岭熊大', '12345678906')," +
+                "('河北刘华强', '12345678907')," +
+                "('橄榄球僵尸', '12345678908')"
+            );
+            System.out.println("数据库初始化成功！");
 
         } catch (SQLException e) {
             System.err.println("数据库初始化失败: " + e.getMessage());

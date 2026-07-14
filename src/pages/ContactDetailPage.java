@@ -11,7 +11,7 @@ import java.awt.*;
 /**
  * 联系人详情页
  * 显示选中联系人的完整信息
- * 确认=编辑  打电话=删除  取消=返回列表
+ * 确认=编辑  拨打=拨号  挂断=删除  取消=返回列表
  */
 public class ContactDetailPage extends JPanel {
 
@@ -110,7 +110,7 @@ public class ContactDetailPage extends JPanel {
             phoneLabel.setText(contact.getPhoneNumber());
         }
         deleteConfirmLabel.setText("");
-        hintLabel.setText("确认=编辑  |  拨打=删除  |  取消=返回");
+        hintLabel.setText("确认=编辑  |  拨打=拨号  |  挂断=删除  |  取消=返回");
     }
 
     /**
@@ -131,7 +131,7 @@ public class ContactDetailPage extends JPanel {
                     // 取消删除
                     deleteConfirm = false;
                     deleteConfirmLabel.setText("");
-                    hintLabel.setText("确认=编辑  |  拨打=删除  |  取消=返回");
+                    hintLabel.setText("确认=编辑  |  拨打=拨号  |  挂断=删除  |  取消=返回");
                     break;
                 default:
                     break;
@@ -141,14 +141,20 @@ public class ContactDetailPage extends JPanel {
 
         switch (keyCode) {
             case "OK":
-                // 编辑
                 editRequested = true;
                 break;
 
             case "CALL":
+                // 拨号
+                if (contact != null) {
+                    hintLabel.setText("正在拨号 " + contact.getName() + " " + contact.getPhoneNumber() + " ...");
+                }
+                break;
+
+            case "HANGUP":
                 // 进入删除确认
                 deleteConfirm = true;
-                deleteConfirmLabel.setText("再次按确认删除 " + contact.getName());
+                deleteConfirmLabel.setText("再次按确认删除 " + (contact != null ? contact.getName() : ""));
                 hintLabel.setText("确认=确认删除  |  取消=取消");
                 break;
 

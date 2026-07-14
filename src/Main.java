@@ -3,10 +3,6 @@ import ui.PhoneFrame;
 
 import javax.swing.*;
 
-/**
- * 程序入口
- * 老年机联系人应用
- */
 public class Main {
     public static void main(String[] args) {
         // 初始化数据库
