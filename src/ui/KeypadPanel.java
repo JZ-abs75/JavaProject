@@ -116,7 +116,7 @@ public class KeypadPanel extends JPanel {
             NumberButton btn = new NumberButton(key[0], key[1]);
             final String keyNum = key[0];
             btn.addActionListener(e -> {
-                System.out.println("数字键按下: " + keyNum);
+//                System.out.println("数字键按下: " + keyNum);
                 if (screenPanel != null) {
                     screenPanel.dispatchKeyPress("NUM_" + keyNum);
                 }

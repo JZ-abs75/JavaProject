@@ -5,7 +5,7 @@ import java.awt.*;
 
 /**
  * 主窗口 —— 模拟老年机外形
- * 布局：上方 ScreenPanel（屏幕）+ 下方 KeypadPanel（按键）
+ * 布局：上方屏幕 ScreenPanel ， 下方按键 KeypadPanel
  * 屏幕只能通过下方按键操作
  */
 public class PhoneFrame extends JFrame {
@@ -15,7 +15,7 @@ public class PhoneFrame extends JFrame {
 
     public PhoneFrame() {
         // 窗口基本设置
-        setTitle("老年机 - 联系人");
+        setTitle("老年机");
         setSize(400, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
